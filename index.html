@@ -1,26 +1,102 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rooster Clicker</title>
+    <title>Rooster Clicker Pro</title>
     <style>
-        body { background-color: #111; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; user-select: none; }
-        h1 { font-size: 26px; color: #ffcc00; margin-bottom: 5px; }
-        .score { font-size: 36px; font-weight: bold; margin: 10px 0; color: #00ffcc; }
-        .rooster-btn { font-size: 120px; cursor: pointer; transition: transform 0.05s ease; margin: 20px 0; }
+        body { 
+            background-color: #111; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            align-items: center; 
+            height: 100vh; 
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+        .header { margin-top: 20px; }
+        h1 { font-size: 28px; color: #ffcc00; margin: 0; text-shadow: 2px 2px black; }
+        .score-box { background: rgba(255,255,255,0.05); padding: 10px 30px; border-radius: 15px; border: 1px solid #333; margin-top: 10px; }
+        .score { font-size: 40px; font-weight: bold; color: #00ffcc; }
+        
+        .rooster-btn { 
+            font-size: 140px; 
+            cursor: pointer; 
+            transition: transform 0.05s ease; 
+            margin: auto;
+        }
         .rooster-btn:active { transform: scale(0.85); }
+        
+        .leaderboard { 
+            background: #1a1a1a; 
+            width: 90%; 
+            max-width: 350px; 
+            border-radius: 15px 15px 0 0; 
+            padding: 15px; 
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+            border-top: 2px solid #ffcc00;
+        }
+        .lb-title { font-size: 18px; color: #ffcc00; margin-bottom: 10px; font-weight: bold; }
+        .lb-row { display: flex; justify-content: space-between; padding: 5px 10px; border-bottom: 1px solid #222; font-size: 14px; }
+        .rank-1 { color: #ffcc00; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1> Rooster Clicker </h1>
-    <div class="score"><span id="tokens">0.0</span> $CSF</div>
-    <div class="rooster-btn" onclick="tapRooster()">🐓</div>
+
+    <div class="header">
+        <h1>Rooster Clicker Pro</h1>
+        <div class="score-box">
+            <div class="score"><span id="tokens">0.0</span> $CSF</div>
+        </div>
+    </div>
+
+    <!-- நம்ம கெத்தான சேவல் -->
+    <div class="rooster-btn" onclick="tapRooster()"> Rooster 🐓 </div>
+
+    <!-- மாஸான லீடர்போர்டு -->
+    <div class="leaderboard">
+        <div class="lb-title">🏆 Top Pack Ranking</div>
+        <div class="lb-row rank-1">
+            <span>1. PUSHPAA (You)</span>
+            <span><span id="lb-your-score">0.0</span> $CSF</span>
+        </div>
+        <div class="lb-row">
+            <span>2. Arsenkushov</span>
+            <span>790.8K $CSF</span>
+        </div>
+        <div class="lb-row">
+            <span>3. Syrdon848</span>
+            <span>245.0K $CSF</span>
+        </div>
+    </div>
+
     <script>
-        let taps = 0;
+        // மொபைல் மெமரியிலிருந்து பழைய ஸ்கோரை எடுக்கும் மேஜிக்
+        let tokens = parseFloat(localStorage.getItem('rooster_tokens')) || 0.0;
+        
+        // ஸ்கிரீனில் பழைய ஸ்கோரை காட்டுதல்
+        document.getElementById('tokens').innerText = tokens.toFixed(1);
+        document.getElementById('lb-your-score').innerText = tokens.toFixed(1);
+
         function tapRooster() {
-            taps++;
-            document.getElementById('tokens').innerText = (taps * 1.6).toFixed(1);
+            tokens += 1.6; // ஒரு தட்டுக்கு 1.6 பாயிண்ட்ஸ் ஏறும்
+            
+            // ஸ்கிரீனை உடனுக்குடன் அப்டேட் செய்தல்
+            document.getElementById('tokens').innerText = tokens.toFixed(1);
+            document.getElementById('lb-your-score').innerText = tokens.toFixed(1);
+            
+            // மொபைல் மெமரிக்குள் புதிய ஸ்கோரை ஆட்டோ-சேவ் செய்தல்
+            localStorage.setItem('rooster_tokens', tokens);
+
+            // வைப்ரேஷன் எஃபெக்ட்
+            if (navigator.vibrate) { navigator.vibrate(40); }
         }
     </script>
 </body>
