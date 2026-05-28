@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rooster Clicker</title>
+    <style>
+        body { background-color: #111; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; user-select: none; }
+        h1 { font-size: 26px; color: #ffcc00; margin-bottom: 5px; }
+        .score { font-size: 36px; font-weight: bold; margin: 10px 0; color: #00ffcc; }
+        .rooster-btn { font-size: 120px; cursor: pointer; transition: transform 0.05s ease; margin: 20px 0; }
+        .rooster-btn:active { transform: scale(0.85); }
+    </style>
+</head>
+<body>
+    <h1> Rooster Clicker </h1>
+    <div class="score"><span id="tokens">0.0</span> $CSF</div>
+    <div class="rooster-btn" onclick="tapRooster()">🐓</div>
+    <script>
+        let taps = 0;
+        function tapRooster() {
+            taps++;
+            document.getElementById('tokens').innerText = (taps * 1.6).toFixed(1);
+        }
+    </script>
+</body>
+</html>
