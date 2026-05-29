@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rooster Clicker Pro</title>
+    <title>Rooster Breeding Pro</title>
     <style>
         body { 
-            background-color: #111; 
-            color: white; 
-            font-family: Arial, sans-serif; 
+            background-color: #0b0c10; 
+            color: #fff; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
             text-align: center; 
             margin: 0; 
             padding: 0; 
@@ -20,83 +19,165 @@
             height: 100vh; 
             user-select: none; 
             -webkit-user-select: none;
+            overflow: hidden;
         }
-        .header { margin-top: 20px; }
-        h1 { font-size: 28px; color: #ffcc00; margin: 0; text-shadow: 2px 2px black; }
-        .score-box { background: rgba(255,255,255,0.05); padding: 10px 30px; border-radius: 15px; border: 1px solid #333; margin-top: 10px; }
-        .score { font-size: 40px; font-weight: bold; color: #00ffcc; }
+        .header { width: 100%; padding-top: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+        .token-display { font-size: 42px; font-weight: bold; color: #ffcc00; font-family: monospace; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .token-icon { font-size: 28px; background: #ffcc00; color: #000; border-radius: 50%; padding: 2px 8px; font-weight: bold; }
         
-        .rooster-btn { 
-            font-size: 140px; 
-            cursor: pointer; 
-            transition: transform 0.05s ease; 
-            margin: auto;
+        .card-container {
+            background: #1f2833;
+            width: 85%;
+            max-width: 340px;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border: 2px solid #ffcc00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
-        .rooster-btn:active { transform: scale(0.85); }
+        .badge { position: absolute; top: 15px; left: 15px; background: #c5a059; color: #000; font-weight: bold; padding: 3px 10px; border-radius: 8px; font-size: 12px; }
+        .rarity { position: absolute; top: 15px; right: 15px; color: #ffcc00; font-weight: bold; font-size: 12px; letter-spacing: 1px; }
         
-        .leaderboard { 
-            background: #1a1a1a; 
-            width: 90%; 
-            max-width: 350px; 
-            border-radius: 15px 15px 0 0; 
-            padding: 15px; 
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
-            border-top: 2px solid #ffcc00;
+        .rooster-avatar { 
+            font-size: 110px; 
+            margin: 25px 0 15px 0;
+            transition: transform 0.05s ease;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
         }
-        .lb-title { font-size: 18px; color: #ffcc00; margin-bottom: 10px; font-weight: bold; }
-        .lb-row { display: flex; justify-content: space-between; padding: 5px 10px; border-bottom: 1px solid #222; font-size: 14px; }
-        .rank-1 { color: #ffcc00; font-weight: bold; }
+        .rooster-avatar:active { transform: scale(0.9); }
+        
+        .feed-btn {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            color: #000;
+            border: none;
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
+            transition: background 0.2s;
+            width: 90%;
+        }
+        .feed-btn:active { transform: scale(0.98); box-shadow: 0 2px 5px rgba(255, 153, 0, 0.4); }
+        
+        /* Floating Text Effects (+0.04) */
+        .floating-text {
+            position: absolute;
+            color: #00ffcc;
+            font-weight: bold;
+            font-size: 22px;
+            animation: floatUp 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-60px); }
+        }
+
+        .footer-nav { 
+            background: #151a21; 
+            width: 100%; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px 0; 
+            border-top: 1px solid #232d38;
+        }
+        .nav-item { font-size: 12px; color: #66788a; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: bold;}
+        .nav-item.active { color: #ffcc00; }
+        .nav-icon { font-size: 20px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Rooster Clicker Pro</h1>
-        <div class="score-box">
-            <div class="score"><span id="tokens">0.0</span> $CSF</div>
+        <!-- வீடியோவில் இருப்பது போன்ற டோக்கன் டிஸ்ப்ளே -->
+        <div class="token-display">
+            <span class="token-icon">⟳</span>
+            <span id="tokens">0.00</span>
         </div>
     </div>
 
-    <!-- நம்ம கெத்தான சேவல் -->
-    <div class="rooster-btn" onclick="tapRooster()"> Rooster 🐓 </div>
+    <!-- வீடியோவில் இருக்கும் அதே கார்டு டிசைன் -->
+    <div class="card-container" id="card">
+        <div class="badge" id="lvl-badge">LVL 1</div>
+        <div class="rarity">COMMON</div>
+        
+        <!-- நம்ம கெத்தான சேவல் -->
+        <div class="rooster-avatar" onclick="feedRooster(event)">🐓</div>
+        
+        <!-- டாப் டூ ஃபீட் பட்டன் -->
+        <button class="feed-btn" onclick="feedRooster(event)">
+            TAP TO FEED 🌾
+        </button>
+    </div>
 
-    <!-- மாஸான லீடர்போர்டு -->
-    <div class="leaderboard">
-        <div class="lb-title">🏆 Top Pack Ranking</div>
-        <div class="lb-row rank-1">
-            <span>1. PUSHPAA (You)</span>
-            <span><span id="lb-your-score">0.0</span> $CSF</span>
-        </div>
-        <div class="lb-row">
-            <span>2. Arsenkushov</span>
-            <span>790.8K $CSF</span>
-        </div>
-        <div class="lb-row">
-            <span>3. Syrdon848</span>
-            <span>245.0K $CSF</span>
-        </div>
+    <!-- வீடியோவில் அடியில் இருக்கும் மெனு பார் -->
+    <div class="footer-nav">
+        <div class="nav-item"><span class="nav-icon">🏪</span>MARKET</div>
+        <div class="nav-item"><span class="nav-icon">🥚</span>EGGS</div>
+        <div class="nav-item active"><span class="nav-icon">🐓</span>ROOSTERS</div>
+        <div class="nav-item"><span class="nav-icon">👥</span>FRIENDS</div>
+        <div class="nav-item"><span class="nav-icon">📋</span>TASKS</div>
     </div>
 
     <script>
-        // மொபைல் மெமரியிலிருந்து பழைய ஸ்கோரை எடுக்கும் மேஜிக்
-        let tokens = parseFloat(localStorage.getItem('rooster_tokens')) || 0.0;
-        
-        // ஸ்கிரீனில் பழைய ஸ்கோரை காட்டுதல்
-        document.getElementById('tokens').innerText = tokens.toFixed(1);
-        document.getElementById('lb-your-score').innerText = tokens.toFixed(1);
+        // ஆட்டோ சேவ் டேட்டாவை மொபைலில் இருந்து எடுத்தல்
+        let tokens = parseFloat(localStorage.getItem('dmd_rooster_tokens')) || 0.00;
+        let level = parseInt(localStorage.getItem('dmd_rooster_lvl')) || 1;
+        let tapCount = parseInt(localStorage.getItem('dmd_rooster_taps')) || 0;
 
-        function tapRooster() {
-            tokens += 1.6; // ஒரு தட்டுக்கு 1.6 பாயிண்ட்ஸ் ஏறும்
+        // ஆரம்ப ஸ்கோர் செட்டிங்ஸ்
+        updateUI();
+
+        function feedRooster(event) {
+            tapCount++;
             
-            // ஸ்கிரீனை உடனுக்குடன் அப்டேட் செய்தல்
-            document.getElementById('tokens').innerText = tokens.toFixed(1);
-            document.getElementById('lb-your-score').innerText = tokens.toFixed(1);
-            
-            // மொபைல் மெமரிக்குள் புதிய ஸ்கோரை ஆட்டோ-சேவ் செய்தல்
-            localStorage.setItem('rooster_tokens', tokens);
+            // வீடியோவில் வருவது போல லெவல் ஏற ஏற அதிக டோக்கன் கிடைக்கும்
+            let earningsPerTap = 0.01 * level; 
+            tokens += earningsPerTap;
+
+            // லெவல் அப் சிஸ்டம் (ஒவ்வொரு 50 தட்டுக்கும் லெவல் ஏறும் மாஸ் ட்ரிக்)
+            if (tapCount >= level * 50 && level < 5) {
+                level++;
+                alert("🔥 வாழ்த்துகள் தலைவா! உங்க சேவல் இப்போ LVL " + level + "-க்கு அப்டேட் ஆகிடுச்சு!");
+            }
+
+            // மொபைல் மெமரிக்குள் டேட்டாவை ஆட்டோ-சேவ் செய்தல்
+            localStorage.setItem('dmd_rooster_tokens', tokens);
+            localStorage.setItem('dmd_rooster_lvl', level);
+            localStorage.setItem('dmd_rooster_taps', tapCount);
+
+            updateUI();
+            createFloatingText(event, earningsPerTap);
 
             // வைப்ரேஷன் எஃபெக்ட்
-            if (navigator.vibrate) { navigator.vibrate(40); }
+            if (navigator.vibrate) { navigator.vibrate(50); }
+        }
+
+        function updateUI() {
+            document.getElementById('tokens').innerText = tokens.toFixed(2);
+            document.getElementById('lvl-badge').innerText = "LVL " + level;
+        }
+
+        // வீடியோவில் வாத்தை தட்டும்போது மேலே பிளஸ் பாயிண்ட்ஸ் மிதந்து போகுமே, அந்த அனிமேஷன்!
+        function createFloatingText(event, amount) {
+            const card = document.getElementById('card');
+            const text = document.createElement('div');
+            text.className = 'floating-text';
+            text.innerText = "+" + amount.toFixed(2);
+            
+            // தட்டும் இடத்திற்கு தகுந்தவாறு டெக்ஸ்ட் பொசிஷன்
+            text.style.left = '45%';
+            text.style.top = '35%';
+            
+            card.appendChild(text);
+            
+            setTimeout(() => { text.remove(); }, 600);
         }
     </script>
 </body>
