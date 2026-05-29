@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DMD Duck Breeding & Pass Pro</title>
+    <title>DMD Duck Buy & Pay Pro</title>
     <style>
         body { 
             background-color: #0b0c10; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; 
@@ -11,106 +11,88 @@
             justify-content: space-between; align-items: center; height: 100vh; 
             user-select: none; -webkit-user-select: none; overflow: hidden;
         }
-        .header { width: 100%; padding-top: 10px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-around; font-size: 16px; font-weight: bold; }
-        .stat-box { background: #1f2833; padding: 6px 12px; border-radius: 10px; border: 1px solid #ffcc00; min-width: 70px; }
+        .header { width: 100%; padding-top: 10px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-around; font-size: 15px; font-weight: bold; }
+        .stat-box { background: #1f2833; padding: 6px 10px; border-radius: 10px; border: 1px solid #ffcc00; }
         
-        /* கேம் மெயின் கார்டு */
         .card-container {
-            background: #1f2833; width: 85%; max-width: 340px; border-radius: 20px; padding: 15px;
+            background: #1f2833; width: 85%; max-width: 340px; border-radius: 20px; padding: 20px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.8); border: 2px solid #ffcc00; position: relative; margin-top: 10px;
         }
         .badge { position: absolute; top: 12px; left: 12px; background: #c5a059; color: #000; font-weight: bold; padding: 2px 8px; border-radius: 6px; font-size: 11px; }
-        .pass-status { position: absolute; top: 12px; right: 12px; color: #00ffcc; font-weight: bold; font-size: 11px; }
+        .slot-count { position: absolute; top: 12px; right: 12px; color: #00ffcc; font-weight: bold; font-size: 11px; }
         
-        .duck-avatar { font-size: 90px; margin: 15px 0 10px 0; transition: transform 0.05s ease; cursor: pointer; }
+        .duck-avatar { font-size: 85px; margin: 15px 0 10px 0; transition: transform 0.05s ease; cursor: pointer; }
         .duck-avatar:active { transform: scale(0.9); }
         
         .feed-btn {
             background: linear-gradient(135deg, #ffcc00, #ff9900); color: #000; border: none;
-            padding: 12px 0; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%;
+            padding: 12px 0; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-bottom: 8px;
+        }
+        .pay-btn {
+            background: linear-gradient(135deg, #ff4d4d, #cc0000); color: #fff; border: none;
+            padding: 10px 0; font-size: 14px; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%;
         }
 
-        /* டர்போ பீடிங் செக்ஷன் */
-        .turbo-section { display: flex; gap: 10px; width: 85%; justify-content: center; margin: 5px 0; }
-        .turbo-btn { background: #232d38; color: #fff; border: 1px solid #444; padding: 6px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .turbo-btn.active { background: #ffcc00; color: #000; border-color: #ffcc00; }
+        /* பை செக்ஷன் */
+        .buy-panel { background: #151a21; width: 85%; padding: 10px; border-radius: 15px; border: 1px solid #232d38; margin: 10px 0; }
+        .buy-title { font-size: 12px; color: #ffcc00; font-weight: bold; margin-bottom: 8px; }
+        .btn-grid { display: flex; gap: 8px; justify-content: center; }
+        .action-mini-btn { background: #1f2833; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
-        /* முட்டை ஸ்டோரேஜ் கிரிட் */
-        .egg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #151a21; padding: 12px; border-radius: 15px; width: 85%; max-width: 320px; border: 1px solid #232d38; }
-        .egg-slot { background: #1f2833; border: 1px dashed #444; border-radius: 10px; height: 55px; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; position: relative; }
-        .egg-lvl { position: absolute; bottom: 2px; right: 4px; font-size: 9px; color: #ffcc00; font-weight: bold; }
-
-        /* அனிமேஷன் எஃபெக்ட் */
         .floating-text { position: absolute; color: #00ffcc; font-weight: bold; font-size: 20px; animation: floatUp 0.5s ease-out forwards; pointer-events: none; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
 
-        /* பாஸ் வாங்கும் பேனல் */
-        .pass-container { display: flex; gap: 8px; width: 90%; justify-content: center; margin-bottom: 5px; }
-        .buy-pass-btn { background: #151a21; color: #ffcc00; border: 1px solid #ffcc00; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; }
-
         .footer-nav { background: #151a21; width: 100%; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #232d38; }
-        .nav-item { font-size: 11px; color: #66788a; display: flex; flex-direction: column; align-items: center; font-weight: bold; cursor: pointer; }
+        .nav-item { font-size: 11px; color: #66788a; display: flex; flex-direction: column; align-items: center; font-weight: bold; }
         .nav-item.active { color: #ffcc00; }
     </style>
 </head>
 <body>
 
-    <!-- டாப் பேனல் நிலவரம் -->
+    <!-- டாப் நிலவரம் -->
     <div class="header">
         <div class="stat-box" style="color: #ffcc00;">🪙 <span id="dmd-val">0.00</span></div>
         <div class="stat-box" style="color: #ff9900;">🌽 <span id="corn-val">500</span></div>
-        <div class="stat-box" style="color: #ff4d4d;">❤️ <span id="heart-val">0</span></div>
+        <div class="stat-box" style="color: #66c2ff;">⭐ <span id="stars-val">100</span></div>
     </div>
 
-    <!-- மெயின் கேம் ஏரியா -->
+    <!-- மெயின் கார்டு -->
     <div class="card-container" id="card">
-        <div class="badge" id="duck-type">COMMON</div>
-        <div class="pass-status" id="active-pass">NO PASS</div>
+        <div class="badge" id="duck-type">COMMON (LVL 1)</div>
+        <div class="slot-count" id="slot-display">SLOTS: 1/1</div>
         
-        <div class="duck-avatar" id="duck-emoji" onclick="feedDuck(event)">🦆</div>
+        <div class="duck-avatar" onclick="feedDuck(event)">🦆</div>
         
-        <button class="feed-btn" id="action-btn" onclick="feedDuck(event)">TAP TO FEED 🌾</button>
+        <button class="feed-btn" onclick="feedDuck(event)">TAP TO FEED 🌾</button>
+        <!-- PAY FEE பட்டன் (கைடு பக்கம் 11 & 12) -->
+        <button class="pay-btn" id="pay-breeding-btn" onclick="payBreedingFee()">PAY BREEDING FEE (100 🌽)</button>
     </div>
 
-    <!-- டர்போ பீடிங் ஸ்விட்ச் (கைடு பக்கம் 23) -->
-    <div class="turbo-section">
-        <div class="turbo-btn active" id="t1" onclick="setTurbo(1)">⚡ ×1</div>
-        <div class="turbo-btn" id="t10" onclick="setTurbo(10)">⚡ ×10 (PRINCE)</div>
-        <div class="turbo-btn" id="t50" onclick="setTurbo(50)">⚡ ×50 (VIP)</div>
+    <!-- BUY & UPGRADE பேனல் (கைடு பக்கம் 2 & 19) -->
+    <div class="buy-panel">
+        <div class="buy-title">🎰 SHOP & UPGRADES (BUY SYSTEM)</div>
+        <div class="btn-grid">
+            <button class="action-mini-btn" onclick="buySlot()">BUY SLOT (<span id="slot-cost">20</span> ⭐)</button>
+            <button class="action-mini-btn" onclick="buyStars()">FREE ⭐ REWARD</button>
+            <button class="action-mini-btn" onclick="changeRarity()">NEXT DUCK 🔄</button>
+        </div>
     </div>
 
-    <!-- முட்டை மேனேஜ்மென்ட் (கைடு பக்கம் 8 & 22) -->
-    <div style="font-size: 12px; font-weight: bold; color: #ffcc00;">🥚 STORAGE (TAP TO MERGE / AUTO-MERGE ACTIVE WITH PASS)</div>
-    <div class="egg-grid">
-        <div class="egg-slot" onclick="clickEgg(0)" id="es-0"></div>
-        <div class="egg-slot" onclick="clickEgg(1)" id="es-1"></div>
-        <div class="egg-slot" onclick="clickEgg(2)" id="es-2"></div>
-        <div class="egg-slot" onclick="clickEgg(3)" id="es-3"></div>
-    </div>
-
-    <!-- டக்கர் பாஸ் ஷாப் (கைடு பக்கம் 21 & 22) -->
-    <div class="pass-container">
-        <button class="buy-pass-btn" onclick="buyPass('PRINCE', 10, 2)">👑 PRINCE (×10)</button>
-        <button class="buy-pass-btn" onclick="buyPass('VIP', 50, 4)">💎 VIP (×50 + AUTO)</button>
-    </div>
-
-    <!-- அடியில் இருக்கும் மெனு -->
+    <!-- மெனு பார் -->
     <div class="footer-nav">
-        <div class="nav-item" onclick="changeRarity()"><span style="font-size:16px;">🔄</span>RARITY</div>
+        <div class="nav-item"><span style="font-size:16px;">🏪</span>MARKET</div>
         <div class="nav-item active"><span style="font-size:16px;">🦆</span>DUCKS</div>
-        <div class="nav-item" onclick="claimDaily()"><span style="font-size:16px;">🎁</span>DAILY</div>
+        <div class="nav-item"><span style="font-size:16px;">💼</span>WALLETS</div>
     </div>
 
     <script>
-        // 26 இமேஜ் ரூல்ஸ்படி லோக்கல் மெமரி சிஸ்டம்
-        let dmd = parseFloat(localStorage.getItem('final_dmd')) || 0.00;
-        let corn = parseInt(localStorage.getItem('final_corn')) || 500;
-        let hearts = parseInt(localStorage.getItem('final_hearts')) || 0;
-        let rarity = localStorage.getItem('final_rarity') || 'COMMON';
-        let pass = localStorage.getItem('final_pass') || 'NO PASS';
-        let turbo = parseInt(localStorage.getItem('final_turbo')) || 1;
-        let eggs = JSON.parse(localStorage.getItem('final_eggs')) || [0, 0, 0, 0];
-        let selectedEgg = null;
+        // லோக்கல் மெமரி ஆட்டோ-சேவ்
+        let dmd = parseFloat(localStorage.getItem('bp_dmd')) || 0.00;
+        let corn = parseInt(localStorage.getItem('bp_corn')) || 500;
+        let stars = parseInt(localStorage.getItem('bp_stars')) || 100;
+        let slots = parseInt(localStorage.getItem('bp_slots')) || 1;
+        let duckLvl = parseInt(localStorage.getItem('bp_duck_lvl')) || 1;
+        let rarity = localStorage.getItem('bp_rarity') || 'COMMON';
 
         const rewards = { 'COMMON': 0.01, 'UNCOMMON': 0.02, 'RARE': 0.04, 'EPIC': 0.5, 'LEGENDARY': 1.6 };
         const emojis = { 'COMMON': '🦆', 'UNCOMMON': '🪿', 'RARE': '🦅', 'EPIC': '🦉', 'LEGENDARY': '👑' };
@@ -118,100 +100,42 @@
         updateUI();
 
         function feedDuck(event) {
-            let cost = turbo;
-            if (corn < cost) {
-                alert("🌽 சோளம் போதவில்லை! DAILY ரிவார்டு வாங்குங்க அல்லது பாஸ் ஆக்டிவேட் செய்யுங்க!");
-                return;
-            }
-
-            corn -= cost;
-            let singleReward = rewards[rarity];
-            let totalReward = singleReward * turbo;
-            dmd += totalReward;
-
-            // பாஸ் இல்லாதபோது கைமுறையாக முட்டை உற்பத்தி
-            if (Math.random() < 0.25 * turbo) {
-                addEgg(1);
-            }
-
-            // VIP பாஸ் இருந்தால் தானாகவே லெவல் 1,2,3 முட்டைகள் மெர்ஜ் ஆகும் (கைடு பக்கம் 22)
-            if (pass === 'VIP') {
-                autoMergeEggs();
-            }
-
+            if (corn <= 0) { alert("🌽 சோளம் காலி! BREEDING FEE செலுத்தி போனஸ் சோளம் பெறுங்கள்!"); return; }
+            corn--;
+            let earn = rewards[rarity] * duckLvl;
+            dmd += earn;
             save();
             updateUI();
-            createFloatingText(event, "+" + totalReward.toFixed(2) + " $DMD");
-            if (navigator.vibrate) { navigator.vibrate(40); }
+            createFloatingText(event, "+" + earn.toFixed(2) + " $DMD");
         }
 
-        function setTurbo(val) {
-            if (val === 10 && pass === 'NO PASS') { alert("இதற்கு PRINCE பாஸ் தேவை ப்ரோ!"); return; }
-            if (val === 50 && pass !== 'VIP') { alert("இதற்கு VIP பாஸ் தேவை தலைவா!"); return; }
-            turbo = val;
+        // PAY FEE சிஸ்டம்: சோளத்தை கட்டணமாக செலுத்தி வாத்தின் லெவலை உயர்த்துவது
+        function payBreedingFee() {
+            let fee = duckLvl === 1 ? 100 : 500; // கைடு பக்கம் 11-ன்படி கட்டணம்
+            if (corn < fee) { alert("ஐயோ! இந்த கட்டணத்தை செலுத்த உங்களிடம் போதுமான சோளம் 🌽 இல்லை!"); return; }
+            
+            corn -= fee;
+            duckLvl++;
+            alert(`🎉 Success! பிரீடிங் கட்டணம் செலுத்தப்பட்டது. உங்க வாத்து இப்போ Level ${duckLvl}-க்கு மாஸா அப்டேட் ஆகிடுச்சு!`);
             save();
             updateUI();
         }
 
-        function buyPass(type, maxTurbo, autoLvl) {
-            pass = type;
-            turbo = 1; 
-            alert(`🎉 வெற்றிகரமாக ${type} Ducker Pass ஆக்டிவேட் செய்யப்பட்டது! தினசரி போனஸ் மற்றும் வேகமான பீடிங் ரெடி!`);
-            corn += 2000; // பாஸ் போனஸ் சோளம்
+        // BUY SYSTEM: ஸ்டார்ஸ் கொடுத்து புதிய ஸ்லாட்டுகளை வாங்குவது
+        function buySlot() {
+            let cost = 20 + (slots - 1) * 20; // கைடு பக்கம் 2: "Each subsequent slot costs 20 Stars more"
+            if (stars < cost) { alert("⭐ உங்களிடம் போதுமான ஸ்டார்ஸ் இல்லை!"); return; }
+            
+            stars -= cost;
+            slots++;
+            alert("🎰 மாஸ் தலைவா! புதிய வாத்து வளர்ப்பு ஸ்லாட் வாங்கப்பட்டு விட்டது!");
             save();
             updateUI();
         }
 
-        function addEgg(lvl) {
-            for (let i = 0; i < eggs.length; i++) {
-                if (eggs[i] === 0) { eggs[i] = lvl; break; }
-            }
-        }
-
-        function autoMergeEggs() {
-            for (let i = 0; i < eggs.length; i++) {
-                for (let j = i + 1; j < eggs.length; j++) {
-                    if (eggs[i] > 0 && eggs[i] === eggs[j] && eggs[i] < 4) {
-                        eggs[i] += 1;
-                        eggs[j] = 0;
-                    }
-                }
-            }
-        }
-
-        function clickEgg(idx) {
-            if (eggs[idx] === 0) return;
-            if (selectedEgg === null) {
-                selectedEgg = idx;
-                document.getElementById(`es-${idx}`).style.border = "2px solid #ffcc00";
-            } else {
-                if (selectedEgg === idx) {
-                    document.getElementById(`es-${idx}`).style.border = "1px dashed #444";
-                    selectedEgg = null;
-                } else if (eggs[selectedEgg] === eggs[idx]) {
-                    eggs[idx] += 1;
-                    eggs[selectedEgg] = 0;
-                    document.getElementById(`es-${selectedEgg}`).style.border = "1px dashed #444";
-                    
-                    if (eggs[idx] >= 4) {
-                        hearts += 50; // லவ் எக் மூலம் ஹார்ட் போனஸ் (கைடு பக்கம் 10 & 24)
-                        eggs[idx] = 0;
-                        alert("❤️ லெவல் 4 முட்டை உடைந்து 50 Hearts போனஸ் கிடைத்தது!");
-                    }
-                    selectedEgg = null;
-                    save();
-                    updateUI();
-                } else {
-                    document.getElementById(`es-${selectedEgg}`).style.border = "1px dashed #444";
-                    selectedEgg = idx;
-                    document.getElementById(`es-${idx}`).style.border = "2px solid #ffcc00";
-                }
-            }
-        }
-
-        function claimDaily() {
-            corn += 300; // தினசரி சோளம் பரிசு
-            alert("🎁 Daily Reward: 300 சோளம் 🌽 வாலட்டில் சேர்க்கப்பட்டது!");
+        function buyStars() {
+            stars += 50;
+            alert("🎁 போனஸ்: 50 இலவச ஸ்டார்ஸ் ⭐ வாலட்டில் வரவு வைக்கப்பட்டது!");
             save();
             updateUI();
         }
@@ -219,37 +143,32 @@
         function changeRarity() {
             const list = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'];
             rarity = list[(list.indexOf(rarity) + 1) % list.length];
+            duckLvl = 1; // புதிய வாத்துக்கு லெவல் ரீசெட்
             save();
             updateUI();
         }
 
         function save() {
-            localStorage.setItem('final_dmd', dmd);
-            localStorage.setItem('final_corn', corn);
-            localStorage.setItem('final_hearts', hearts);
-            localStorage.setItem('final_rarity', rarity);
-            localStorage.setItem('final_pass', pass);
-            localStorage.setItem('final_turbo', turbo);
-            localStorage.setItem('final_eggs', JSON.stringify(eggs));
+            localStorage.setItem('bp_dmd', dmd);
+            localStorage.setItem('bp_corn', corn);
+            localStorage.setItem('bp_stars', stars);
+            localStorage.setItem('bp_slots', slots);
+            localStorage.setItem('bp_duck_lvl', duckLvl);
+            localStorage.setItem('bp_rarity', rarity);
         }
 
         function updateUI() {
             document.getElementById('dmd-val').innerText = dmd.toFixed(2);
             document.getElementById('corn-val').innerText = corn;
-            document.getElementById('heart-val').innerText = hearts;
-            document.getElementById('duck-type').innerText = rarity;
-            document.getElementById('duck-emoji').innerText = emojis[rarity];
-            document.getElementById('active-pass').innerText = pass;
-
-            // டர்போ பட்டன் ஹைலைட்
-            document.getElementById('t1').className = turbo === 1 ? "turbo-btn active" : "turbo-btn";
-            document.getElementById('t10').className = turbo === 10 ? "turbo-btn active" : "turbo-btn";
-            document.getElementById('t50').className = turbo === 50 ? "turbo-btn active" : "turbo-btn";
-
-            for (let i = 0; i < eggs.length; i++) {
-                let slot = document.getElementById(`es-${i}`);
-                slot.innerHTML = eggs[i] > 0 ? `🥚<span class="egg-lvl">Lv.${eggs[i]}</span>` : "";
-            }
+            document.getElementById('stars-val').innerText = stars;
+            document.getElementById('duck-type').innerText = `${rarity} (LVL ${duckLvl})`;
+            document.getElementById('slot-display').innerText = `SLOTS: 1/${slots}`;
+            
+            let nextFee = duckLvl === 1 ? 100 : 500;
+            document.getElementById('pay-breeding-btn').innerText = `PAY BREEDING FEE (${nextFee} 🌽)`;
+            
+            let nextSlotCost = 20 + (slots - 1) * 20;
+            document.getElementById('slot-cost').innerText = nextSlotCost;
         }
 
         function createFloatingText(event, txt) {
